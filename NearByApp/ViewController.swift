@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -17,9 +18,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewDidLoad()
         nearLocationsTableView.delegate = self
         nearLocationsTableView.dataSource = self
-        // Do any additional setup after loading the view.
-//        let nibCustomCell = UINib(nibName: "CustomTableViewCell", bundle: nil)
-//        tableViewNib.register(nibCustomCell, forCellReuseIdentifier: "customCell")
+        let nibCustomCell = UINib(nibName: "LocationTableViewCell", bundle: nil)
+        nearLocationsTableView.register(nibCustomCell, forCellReuseIdentifier: "locationCell")
     }
     
     
@@ -27,17 +27,30 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return 10
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+            // Return the desired height for your custom cell
+            return 200.0 // Change this value to your desired height
+        }
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "locationCell", for: indexPath)
-//        as! CustomTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "locationCell", for: indexPath) as! LocationTableViewCell
         
-        cell.textLabel?.text = "hello"
+        //https://ss3.4sqi.net/img/categories_v2/building/default_120.png
+        //https://ss3.4sqi.net/img/categories_v2/nightlife/hookahbar_120.png
         
+        //https://totalpng.com//public/uploads/preview/joker-png-download-116534606012m0ndj8vdf.png
         
+        let imageUrl = URL(string: "https://totalpng.com//public/uploads/preview/joker-png-download-116534606012m0ndj8vdf.png")
+        
+        cell.locationIcon.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "man"))
+        
+        cell.placeName.text = "Caffee"
+        cell.placeCategory.text = "Caffee Shop"
+        cell.placeAddress.text = "Cairo"
         return cell
+        
     }
-
 
 }
 
