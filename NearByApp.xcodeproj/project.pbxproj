@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		404B2F902BFE2CB1007B968D /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404B2F8E2BFE2CB1007B968D /* LocationTableViewCell.swift */; };
 		404B2F912BFE2CB1007B968D /* LocationTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 404B2F8F2BFE2CB1007B968D /* LocationTableViewCell.xib */; };
+		40BB48E12BFE4C1600827DE9 /* NearByLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BB48E02BFE4C1600827DE9 /* NearByLocations.swift */; };
 		40BE7FA72BFD94BB00814FA0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BE7FA62BFD94BB00814FA0 /* AppDelegate.swift */; };
 		40BE7FA92BFD94BB00814FA0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BE7FA82BFD94BB00814FA0 /* SceneDelegate.swift */; };
 		40BE7FAB2BFD94BB00814FA0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BE7FAA2BFD94BB00814FA0 /* ViewController.swift */; };
@@ -22,6 +23,7 @@
 /* Begin PBXFileReference section */
 		404B2F8E2BFE2CB1007B968D /* LocationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTableViewCell.swift; sourceTree = "<group>"; };
 		404B2F8F2BFE2CB1007B968D /* LocationTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocationTableViewCell.xib; sourceTree = "<group>"; };
+		40BB48E02BFE4C1600827DE9 /* NearByLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearByLocations.swift; sourceTree = "<group>"; };
 		40BE7FA32BFD94BB00814FA0 /* NearByApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NearByApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		40BE7FA62BFD94BB00814FA0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		40BE7FA82BFD94BB00814FA0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				40BE7FAF2BFD94BB00814FA0 /* NearByApp.xcdatamodeld */,
 				404B2F8E2BFE2CB1007B968D /* LocationTableViewCell.swift */,
 				404B2F8F2BFE2CB1007B968D /* LocationTableViewCell.xib */,
+				40BB48E02BFE4C1600827DE9 /* NearByLocations.swift */,
 			);
 			path = NearByApp;
 			sourceTree = "<group>";
@@ -219,6 +222,7 @@
 				40BE7FB12BFD94BB00814FA0 /* NearByApp.xcdatamodeld in Sources */,
 				404B2F902BFE2CB1007B968D /* LocationTableViewCell.swift in Sources */,
 				40BE7FAB2BFD94BB00814FA0 /* ViewController.swift in Sources */,
+				40BB48E12BFE4C1600827DE9 /* NearByLocations.swift in Sources */,
 				40BE7FA72BFD94BB00814FA0 /* AppDelegate.swift in Sources */,
 				40BE7FA92BFD94BB00814FA0 /* SceneDelegate.swift in Sources */,
 			);
