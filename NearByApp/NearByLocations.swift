@@ -24,8 +24,8 @@ class CategoryOfLacation: Codable{
 }
 
 class Location: Codable{
-    var address: String?
     var country: String?
+    var region: String?
 }
 
 class Icon: Codable{

@@ -50,13 +50,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "locationCell", for: indexPath) as! LocationTableViewCell
         
-        let imageUrl = URL(string: "https://ss3.4sqi.net/img/categories_v2/nightlife/hookahbar_bg_120.png")
+        let imageUrl = URL(string: (nearByLocations?.results[indexPath.row].categories[0].icon?.prefix ?? "")+"bg_120"+(nearByLocations?.results[indexPath.row].categories[0].icon?.suffix ?? ""))
         
         cell.locationIcon.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "man"))
         
         cell.placeName.text = nearByLocations?.results[indexPath.row].name
         cell.placeCategory.text = nearByLocations?.results[indexPath.row].categories[0].plural_name
-        cell.placeAddress.text = nearByLocations?.results[indexPath.row].location?.country
+        cell.placeAddress.text = (nearByLocations?.results[indexPath.row].location?.country ?? "")+", "+(nearByLocations?.results[indexPath.row].location?.region ?? "")
         return cell
         
     }
