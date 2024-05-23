@@ -52,6 +52,51 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		400E6BB02C00022000C3BCFE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				40BB48E02BFE4C1600827DE9 /* NearByLocations.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		400E6BB12C00022800C3BCFE /* View */ = {
+			isa = PBXGroup;
+			children = (
+				40BE7FAC2BFD94BB00814FA0 /* Main.storyboard */,
+				40BE7FB42BFD94BD00814FA0 /* LaunchScreen.storyboard */,
+				404B2F8F2BFE2CB1007B968D /* LocationTableViewCell.xib */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		400E6BB22C00022F00C3BCFE /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				400E6BB42C00029400C3BCFE /* Home */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
+		400E6BB32C00023900C3BCFE /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				40BE7FA62BFD94BB00814FA0 /* AppDelegate.swift */,
+				40BE7FA82BFD94BB00814FA0 /* SceneDelegate.swift */,
+				404B2F8E2BFE2CB1007B968D /* LocationTableViewCell.swift */,
+				40BE7FB22BFD94BD00814FA0 /* Assets.xcassets */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		400E6BB42C00029400C3BCFE /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				40BE7FAA2BFD94BB00814FA0 /* ViewController.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		40AFE37E2BFEB2ED00BB9464 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -89,18 +134,13 @@
 		40BE7FA52BFD94BB00814FA0 /* NearByApp */ = {
 			isa = PBXGroup;
 			children = (
+				400E6BB32C00023900C3BCFE /* Utils */,
+				400E6BB22C00022F00C3BCFE /* Modules */,
+				400E6BB12C00022800C3BCFE /* View */,
+				400E6BB02C00022000C3BCFE /* Model */,
 				40AFE37E2BFEB2ED00BB9464 /* Services */,
-				40BE7FA62BFD94BB00814FA0 /* AppDelegate.swift */,
-				40BE7FA82BFD94BB00814FA0 /* SceneDelegate.swift */,
-				40BE7FAA2BFD94BB00814FA0 /* ViewController.swift */,
-				40BE7FAC2BFD94BB00814FA0 /* Main.storyboard */,
-				40BE7FB22BFD94BD00814FA0 /* Assets.xcassets */,
-				40BE7FB42BFD94BD00814FA0 /* LaunchScreen.storyboard */,
 				40BE7FB72BFD94BD00814FA0 /* Info.plist */,
 				40BE7FAF2BFD94BB00814FA0 /* NearByApp.xcdatamodeld */,
-				404B2F8E2BFE2CB1007B968D /* LocationTableViewCell.swift */,
-				404B2F8F2BFE2CB1007B968D /* LocationTableViewCell.xib */,
-				40BB48E02BFE4C1600827DE9 /* NearByLocations.swift */,
 			);
 			path = NearByApp;
 			sourceTree = "<group>";
