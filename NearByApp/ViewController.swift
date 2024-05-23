@@ -13,9 +13,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet weak var nearLocationsTableView: UITableView!
     
+    var fetchDataFromAPI: FetchDataFromAPI?
         
     override func viewDidLoad() {
         super.viewDidLoad()
+        fetchDataFromAPI = FetchDataFromAPI()
+        if #available(iOS 13.0, *) {
+            Task {
+                await fetchDataFromAPI?.getNearLocations()
+            }
+        }
         nearLocationsTableView.delegate = self
         nearLocationsTableView.dataSource = self
         let nibCustomCell = UINib(nibName: "LocationTableViewCell", bundle: nil)

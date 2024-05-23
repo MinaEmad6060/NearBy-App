@@ -8,27 +8,27 @@
 import Foundation
 
 
-class NearByLocations{
+class NearByLocations: Codable{
     var results: [Result] = [Result]()
 }
 
-class Result{
+class Result: Codable{
     var categories: [CategoryOfLacation] = [CategoryOfLacation]()
     var location: Location?
     var name: String?
 }
 
-class CategoryOfLacation{
+class CategoryOfLacation: Codable{
     var plural_name: String?
     var icon: Icon?
 }
 
-class Location{
+class Location: Codable{
     var address: String?
     var country: String?
 }
 
-class Icon{
+class Icon: Codable{
     var prefix: String?
     var suffix: String?
 }
