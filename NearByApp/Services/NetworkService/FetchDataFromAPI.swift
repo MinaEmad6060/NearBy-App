@@ -26,7 +26,6 @@ class FetchDataFromAPI{
             do{
                 let (data, _) = try await URLSession.shared.data(for: request)
                 let decoder = JSONDecoder()
-                        // Assuming your response JSON structure matches this Codable structure
                
                 response = try decoder.decode(NearByLocations.self, from: data)
                 print("My Result => \(response?.results[0].name ?? "none")")
