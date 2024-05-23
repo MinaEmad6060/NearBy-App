@@ -92,9 +92,25 @@
 		400E6BB42C00029400C3BCFE /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				40BE7FAA2BFD94BB00814FA0 /* ViewController.swift */,
+				400E6BB62C0003D100C3BCFE /* viewModel */,
+				400E6BB52C0003CB00C3BCFE /* view */,
 			);
 			path = Home;
+			sourceTree = "<group>";
+		};
+		400E6BB52C0003CB00C3BCFE /* view */ = {
+			isa = PBXGroup;
+			children = (
+				40BE7FAA2BFD94BB00814FA0 /* ViewController.swift */,
+			);
+			path = view;
+			sourceTree = "<group>";
+		};
+		400E6BB62C0003D100C3BCFE /* viewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = viewModel;
 			sourceTree = "<group>";
 		};
 		40AFE37E2BFEB2ED00BB9464 /* Services */ = {
