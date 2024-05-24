@@ -16,28 +16,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     var fetchDataFromAPI: FetchDataFromAPI?
     var nearByLocations: NearByLocations?
-    
     var networkConnection: NetworkConnection?
         
     override func viewDidLoad() {
         super.viewDidLoad()
-    networkConnection = NetworkConnection()
-        if networkConnection!.isNetworkReachable() {
-            print("Network is reachable")
-        } else {
-            let alertController = UIAlertController(title: "Alert Title", message: "Alert Message", preferredStyle: .alert)
-
-            let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-                // Handle OK button action if needed
-            }
-            alertController.addAction(okAction)
-
-            // Present the alert
-            DispatchQueue.main.async {
-                self.present(alertController, animated: true, completion: nil)
-            }
-            print("No network connection")
-        }
+        networkConnection = NetworkConnection()
+        checkNetworkConnection()
         getUpdatedLocation()
         fetchDataFromAPI = FetchDataFromAPI()
         nearByLocations = NearByLocations()
@@ -85,15 +69,13 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func getUpdatedLocation(){
         LocationManager.shared.getUserLocation{ location in
-            
             let latitude = location.coordinate.latitude
             let longitude = location.coordinate.longitude
             let currentLat = LocationManager.currentLocation?.coordinate.latitude
             let currentLon = LocationManager.currentLocation?.coordinate.longitude
-           
+            print("currentLat: \(currentLat ?? 0.0) currentLon: \(currentLon ?? 0.0)")
             let distance = self.calculateDistance(fromLatitude: latitude, fromLongitude: longitude, toLatitude: currentLat ?? 0.0, toLongitude: currentLon ?? 0.0)
             print("Distance: \(distance) meters")
-            
         }
         
     }
@@ -104,6 +86,25 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let coordinate2 = CLLocation(latitude: latitude2, longitude: longitude2)
         
         return coordinate1.distance(from: coordinate2)
+    }
+    
+    func checkNetworkConnection(){
+        if networkConnection!.isNetworkReachable() {
+            print("Network is reachable")
+        } else {
+            let alertController = UIAlertController(title: "Alert Title", message: "Alert Message", preferredStyle: .alert)
+
+            let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+                // Handle OK button action if needed
+            }
+            alertController.addAction(okAction)
+
+            // Present the alert
+            DispatchQueue.main.async {
+                self.present(alertController, animated: true, completion: nil)
+            }
+            print("No network connection")
+        }
     }
  
 
