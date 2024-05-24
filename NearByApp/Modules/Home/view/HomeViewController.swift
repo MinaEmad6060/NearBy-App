@@ -7,24 +7,45 @@
 
 import UIKit
 import SDWebImage
+import CoreLocation
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
     @IBOutlet weak var nearLocationsTableView: UITableView!
     
     var fetchDataFromAPI: FetchDataFromAPI?
     var nearByLocations: NearByLocations?
+    
+    var networkConnection: NetworkConnection?
         
     override func viewDidLoad() {
         super.viewDidLoad()
+    networkConnection = NetworkConnection()
+        if networkConnection!.isNetworkReachable() {
+            print("Network is reachable")
+        } else {
+            let alertController = UIAlertController(title: "Alert Title", message: "Alert Message", preferredStyle: .alert)
+
+            let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+                // Handle OK button action if needed
+            }
+            alertController.addAction(okAction)
+
+            // Present the alert
+            DispatchQueue.main.async {
+                self.present(alertController, animated: true, completion: nil)
+            }
+            print("No network connection")
+        }
+        getUpdatedLocation()
         fetchDataFromAPI = FetchDataFromAPI()
         nearByLocations = NearByLocations()
         if #available(iOS 13.0, *) {
             Task {
                     nearByLocations = await fetchDataFromAPI?.getNearLocations()
                     DispatchQueue.main.async {
-                        self.nearLocationsTableView.reloadData() // Update table view
+                        self.nearLocationsTableView.reloadData()
                     }
             }
         }
@@ -60,6 +81,31 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
         
     }
+    
+    
+    func getUpdatedLocation(){
+        LocationManager.shared.getUserLocation{ location in
+            
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            let currentLat = LocationManager.currentLocation?.coordinate.latitude
+            let currentLon = LocationManager.currentLocation?.coordinate.longitude
+           
+            let distance = self.calculateDistance(fromLatitude: latitude, fromLongitude: longitude, toLatitude: currentLat ?? 0.0, toLongitude: currentLon ?? 0.0)
+            print("Distance: \(distance) meters")
+            
+        }
+        
+    }
+    
+    
+    func calculateDistance(fromLatitude latitude1: Double, fromLongitude longitude1: Double, toLatitude latitude2: Double, toLongitude longitude2: Double) -> CLLocationDistance {
+        let coordinate1 = CLLocation(latitude: latitude1, longitude: longitude1)
+        let coordinate2 = CLLocation(latitude: latitude2, longitude: longitude2)
+        
+        return coordinate1.distance(from: coordinate2)
+    }
+ 
 
 }
 
