@@ -31,7 +31,6 @@ class FetchDataFromAPI{
                 let decoder = JSONDecoder()
                
                 response = try decoder.decode(NearByLocations.self, from: data)
-                print("My Result => \(response?.results[0].name ?? "none")")
             }catch{
                 print("Error while fetching data")
             }
