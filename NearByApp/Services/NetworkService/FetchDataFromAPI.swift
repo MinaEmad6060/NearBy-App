@@ -15,7 +15,9 @@ class FetchDataFromAPI{
     //https://api.foursquare.com/v3/places/nearby?ll=48.8583701,2.2944813
     @available(iOS 13.0.0, *)
     func getNearLocations() async -> NearByLocations? {
-            let url = URL(string: "https://api.foursquare.com/v3/places/nearby?ll=48.8583701,2.2944813")!
+        let currentLat = LocationManager.currentLocation?.coordinate.latitude
+        let currentLon = LocationManager.currentLocation?.coordinate.longitude
+        let url = URL(string: "https://api.foursquare.com/v3/places/nearby?ll=\(currentLat ?? 0.0),\(currentLon ?? 0.0)")!
             var request = URLRequest(url: url)
             request.httpMethod = "GET"
             request.timeoutInterval = 10

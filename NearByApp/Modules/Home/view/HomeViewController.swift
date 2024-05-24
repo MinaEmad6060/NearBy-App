@@ -55,13 +55,16 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "locationCell", for: indexPath) as! LocationTableViewCell
         
-        let imageUrl = URL(string: (nearByLocations?.results[indexPath.row].categories[0].icon?.prefix ?? "")+"bg_120"+(nearByLocations?.results[indexPath.row].categories[0].icon?.suffix ?? ""))
         
-        cell.locationIcon.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "man"))
-        
-        cell.placeName.text = nearByLocations?.results[indexPath.row].name
-        cell.placeCategory.text = nearByLocations?.results[indexPath.row].categories[0].plural_name
-        cell.placeAddress.text = (nearByLocations?.results[indexPath.row].location?.country ?? "")+", "+(nearByLocations?.results[indexPath.row].location?.region ?? "")
+        if let nearByLocations = nearByLocations {
+            let imageUrl = URL(string: (nearByLocations.results[indexPath.row].categories[0].icon?.prefix ?? "")+"bg_120"+(nearByLocations.results[indexPath.row].categories[0].icon?.suffix ?? ""))
+            
+            cell.locationIcon.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "man"))
+            
+            cell.placeName.text = nearByLocations.results[indexPath.row].name
+            cell.placeCategory.text = nearByLocations.results[indexPath.row].categories[0].plural_name
+            cell.placeAddress.text = (nearByLocations.results[indexPath.row].location?.country ?? "")+", "+(nearByLocations.results[indexPath.row].location?.region ?? "")
+        }
         return cell
         
     }
@@ -69,13 +72,30 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func getUpdatedLocation(){
         LocationManager.shared.getUserLocation{ location in
-            let latitude = location.coordinate.latitude
-            let longitude = location.coordinate.longitude
-            let currentLat = LocationManager.currentLocation?.coordinate.latitude
-            let currentLon = LocationManager.currentLocation?.coordinate.longitude
-            print("currentLat: \(currentLat ?? 0.0) currentLon: \(currentLon ?? 0.0)")
-            let distance = self.calculateDistance(fromLatitude: latitude, fromLongitude: longitude, toLatitude: currentLat ?? 0.0, toLongitude: currentLon ?? 0.0)
-            print("Distance: \(distance) meters")
+            
+            if LocationManager.distance >= 200 {
+                print("if distance")
+                if #available(iOS 13.0, *) {
+                    print("if #available")
+                    Task {
+                        print("Task")
+                        self.nearByLocations = await self.fetchDataFromAPI?.getNearLocations()
+                        if let nearByLocations = self.nearByLocations {
+                            print("New Area : \(nearByLocations.results.count)")
+                            print("New Area : \(nearByLocations.results[0].name ?? "none")")
+                        }
+                        DispatchQueue.main.async {
+                            print("DispatchQueue")
+                            self.nearLocationsTableView.reloadData()
+                        }
+                    }
+                }
+                print("Reset")
+            }else {
+                print("Distance is less than 200")
+            }
+            
+            print("Distance: \(LocationManager.distance) meters")
         }
         
     }

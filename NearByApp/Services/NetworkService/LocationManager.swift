@@ -12,6 +12,7 @@ import CoreLocation
 class LocationManager: NSObject, CLLocationManagerDelegate{
     static let shared = LocationManager()
     static var currentLocation: CLLocation?
+    static var distance = 0.0
     
     let manager = CLLocationManager()
     
@@ -33,8 +34,29 @@ class LocationManager: NSObject, CLLocationManagerDelegate{
             LocationManager.currentLocation=locations.first
         }
         
+        let updatedLat = location.coordinate.latitude
+        let updatedLon = location.coordinate.longitude
+        let currentLat = LocationManager.currentLocation?.coordinate.latitude
+        let currentLon = LocationManager.currentLocation?.coordinate.longitude
+        LocationManager.distance = self.calculateDistance(fromLatitude: updatedLat, fromLongitude: updatedLon, toLatitude: currentLat ?? 0.0, toLongitude: currentLon ?? 0.0)
+        
+        
+        if LocationManager.distance >= 200 {
+            LocationManager.currentLocation=locations.first
+        }
+        
+        
+        
         completion?(location)
 //        manager.stopUpdatingLocation()
+    }
+    
+    
+    func calculateDistance(fromLatitude latitude1: Double, fromLongitude longitude1: Double, toLatitude latitude2: Double, toLongitude longitude2: Double) -> CLLocationDistance {
+        let coordinate1 = CLLocation(latitude: latitude1, longitude: longitude1)
+        let coordinate2 = CLLocation(latitude: latitude2, longitude: longitude2)
+        
+        return coordinate1.distance(from: coordinate2)
     }
     
 }
