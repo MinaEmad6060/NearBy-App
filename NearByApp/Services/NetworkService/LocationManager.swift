@@ -39,10 +39,11 @@ class LocationManager: NSObject, CLLocationManagerDelegate{
         let currentLat = LocationManager.currentLocation?.coordinate.latitude
         let currentLon = LocationManager.currentLocation?.coordinate.longitude
         LocationManager.distance = self.calculateDistance(fromLatitude: updatedLat, fromLongitude: updatedLon, toLatitude: currentLat ?? 0.0, toLongitude: currentLon ?? 0.0)
-        
-        
+        print("currentLat : \(currentLat ?? 0.0) \n currentLon\(currentLon ?? 0.0)")
+       
         if LocationManager.distance >= 200 {
             LocationManager.currentLocation=locations.first
+            print("Reset")
         }
         
         

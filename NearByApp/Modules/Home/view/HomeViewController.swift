@@ -9,90 +9,127 @@ import UIKit
 import SDWebImage
 import CoreLocation
 
+
+@available(iOS 13.0.0, *)
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
     @IBOutlet weak var nearLocationsTableView: UITableView!
     
-    var fetchDataFromAPI: FetchDataFromAPI?
-    var nearByLocations: NearByLocations?
+    var homeViewModel: HomeViewModelProtocol?
+    var numberOfPlaces = 0
     var networkConnection: NetworkConnection?
+    var placeDetails: [PlaceDetails] = [PlaceDetails]()
         
     override func viewDidLoad() {
         super.viewDidLoad()
         networkConnection = NetworkConnection()
-        checkNetworkConnection()
+        homeViewModel = HomeViewModel()
+        
         getUpdatedLocation()
-        fetchDataFromAPI = FetchDataFromAPI()
-        nearByLocations = NearByLocations()
-        if #available(iOS 13.0, *) {
-            Task {
-                    nearByLocations = await fetchDataFromAPI?.getNearLocations()
-                    DispatchQueue.main.async {
-                        self.nearLocationsTableView.reloadData()
-                    }
-            }
-        }
+        checkNetworkConnection()
+        updateTableView()
+        
+        
         nearLocationsTableView.delegate = self
         nearLocationsTableView.dataSource = self
+        
         let nibCustomCell = UINib(nibName: "LocationTableViewCell", bundle: nil)
         nearLocationsTableView.register(nibCustomCell, forCellReuseIdentifier: "locationCell")
     }
     
     
-    
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return nearByLocations?.results.count ?? 10
+        return numberOfPlaces
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-            // Return the desired height for your custom cell
-            return 200.0 // Change this value to your desired height
+            return 200.0
         }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "locationCell", for: indexPath) as! LocationTableViewCell
-        if let nearByLocations = nearByLocations {
-            if !nearByLocations.results[indexPath.row].categories.isEmpty {
-                let imageUrl = URL(string: (nearByLocations.results[indexPath.row].categories[0].icon?.prefix ?? "")+"bg_120"+(nearByLocations.results[indexPath.row].categories[0].icon?.suffix ?? ""))
-                
-                cell.locationIcon.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "man"))
-                
-                cell.placeName.text = nearByLocations.results[indexPath.row].name
-                cell.placeCategory.text = nearByLocations.results[indexPath.row].categories[0].plural_name
-                cell.placeAddress.text = (nearByLocations.results[indexPath.row].location?.country ?? "")+", "+(nearByLocations.results[indexPath.row].location?.region ?? "")
-            }
+
+        if placeDetails.count > 0{
+            let imageUrl = URL(string: (placeDetails[indexPath.row].placeImagePrefix ?? "")+"bg_120"+(placeDetails[indexPath.row].placeImageSuffix ?? ""))
+            
+            cell.locationIcon.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "man"))
+            
+            cell.placeName.text = placeDetails[indexPath.row].placeName
+            cell.placeCategory.text = placeDetails[indexPath.row].categoryOfPlace?.plural_name
+            cell.placeAddress.text = (placeDetails[indexPath.row].countryOfPlace ?? "")+", "+(placeDetails[indexPath.row].regionOfPlace ?? "")
         }
+        
+
         return cell
         
     }
     
+    
+    
+    @available(iOS 13.0.0, *)
+    func updateTableView(){
+
+        homeViewModel?.getNearLocationsFromApi()
+        
+        homeViewModel?.bindResultToViewController = {
+            self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
+            print("numberOfPlaces : \(self.numberOfPlaces)")
+            var placeDetails = PlaceDetails()
+            for i in 0..<self.numberOfPlaces {
+                placeDetails.placeName = self.homeViewModel?.nearLocations?.results[i].name ?? ""
+                placeDetails.placeImagePrefix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.prefix ?? ""
+                placeDetails.placeImageSuffix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.suffix ?? ""
+                
+                placeDetails.categoryOfPlace = self.homeViewModel?.nearLocations?.results[i].categories[0]
+                placeDetails.countryOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.country
+                placeDetails.regionOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.region
+                
+                self.placeDetails.append(placeDetails)
+            }
+            
+            
+            DispatchQueue.main.async {
+                self.nearLocationsTableView.reloadData()
+            }
+        }
+        
+    }
     
     func getUpdatedLocation(){
         LocationManager.shared.getUserLocation{ location in
             
             if LocationManager.distance >= 200 {
                 print("if distance")
-                if #available(iOS 13.0, *) {
-                    print("if #available")
-                    Task {
-                        print("Task")
-                        self.nearByLocations = await self.fetchDataFromAPI?.getNearLocations()
-                        if let nearByLocations = self.nearByLocations {
-                            print("New Area : \(nearByLocations.results.count)")
-                            print("New Area : \(nearByLocations.results[0].name ?? "none")")
+                self.homeViewModel?.getNearLocationsFromApi()
+                
+                self.homeViewModel?.bindResultToViewController = {
+                    self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
+                    print("numberOfPlaces : \(self.numberOfPlaces)")
+                    var placeDetails = PlaceDetails()
+                    for i in 0..<self.numberOfPlaces {
+                        if self.homeViewModel?.nearLocations?.results[i].categories.count ?? 0 > 0 {
+                        
+                            placeDetails.placeName = self.homeViewModel?.nearLocations?.results[i].name ?? ""
+                            placeDetails.placeImagePrefix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.prefix ?? ""
+                            placeDetails.placeImageSuffix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.suffix ?? ""
+                            
+                            placeDetails.categoryOfPlace = self.homeViewModel?.nearLocations?.results[i].categories[0]
+                            placeDetails.countryOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.country
+                            placeDetails.regionOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.region
+                            
+                            self.placeDetails.append(placeDetails)
                         }
-                        DispatchQueue.main.async {
-                            print("DispatchQueue")
-                            self.nearLocationsTableView.reloadData()
-                        }
+                       
+                    }
+                    
+                    
+                    
+                    DispatchQueue.main.async {
+                        self.nearLocationsTableView.reloadData()
                     }
                 }
-                print("Reset")
-            }else {
-                print("Distance is less than 200")
             }
             
             print("Distance: \(LocationManager.distance) meters")
@@ -126,7 +163,16 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             print("No network connection")
         }
     }
- 
+    
 
 }
 
+
+struct PlaceDetails{
+    var placeName: String?
+    var placeImagePrefix: String?
+    var placeImageSuffix: String?
+    var categoryOfPlace: CategoryOfLacation?
+    var countryOfPlace: String?
+    var regionOfPlace: String?
+}
