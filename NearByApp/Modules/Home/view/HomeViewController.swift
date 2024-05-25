@@ -50,6 +50,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
         if let mode = UserDefaults.standard.string(forKey: "Mode") {
             btnModeText.title = mode
         }
@@ -68,6 +70,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         let nibCustomCell = UINib(nibName: "LocationTableViewCell", bundle: nil)
         nearLocationsTableView.register(nibCustomCell, forCellReuseIdentifier: "locationCell")
+    }
+    
+    override func viewDidLayoutSubviews() {
+        placeDetails.removeAll()
+        print("viewDidLayoutSubviews \(numberOfPlaces)")
     }
     
     
@@ -132,7 +139,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func getUpdatedLocation(){
         LocationManager.shared.getUserLocation{ location in
                 self.homeViewModel?.getNearLocationsFromApi()
-            print("LocationManager : \(UserDefaults.standard.string(forKey: "Online") ?? "nothing")")
+//            print("LocationManager : \(UserDefaults.standard.string(forKey: "Online") ?? "nothing")")
             
             if (LocationManager.currentLocation?.coordinate.latitude == -1 || self.numberOfPlaces == 0) && (UserDefaults.standard.string(forKey: "Online") == "success") {
                 self.nearLocationsTableView.isHidden = true
@@ -154,7 +161,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 if LocationManager.distance >= 200 {
                     self.homeViewModel?.bindPlacesToViewController = {
                     self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
-                    print("numberOfPlaces : \(self.numberOfPlaces)")
+//                    print("numberOfPlaces : \(self.numberOfPlaces)")
                     var placeDetails = PlaceDetails()
                     for i in 0..<self.numberOfPlaces {
                         if self.homeViewModel?.nearLocations?.results[i].categories.count ?? 0 > 0 {
@@ -177,7 +184,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
             }
             
-            print("Distance: \(LocationManager.distance) meters")
+//            print("Distance: \(LocationManager.distance) meters")
         }
         
     }
