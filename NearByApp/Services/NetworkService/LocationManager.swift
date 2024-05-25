@@ -39,14 +39,19 @@ class LocationManager: NSObject, CLLocationManagerDelegate{
         let currentLat = LocationManager.currentLocation?.coordinate.latitude
         let currentLon = LocationManager.currentLocation?.coordinate.longitude
         LocationManager.distance = self.calculateDistance(fromLatitude: updatedLat, fromLongitude: updatedLon, toLatitude: currentLat ?? 0.0, toLongitude: currentLon ?? 0.0)
-        print("currentLat : \(currentLat ?? 0.0) \n currentLon\(currentLon ?? 0.0)")
+//        print("currentLat : \(currentLat ?? 0.0) ::: currentLon\(currentLon ?? 0.0)")
        
         if LocationManager.distance >= 200 {
             LocationManager.currentLocation=locations.first
             print("Reset")
         }
         
-        
+        if let mode = UserDefaults.standard.string(forKey: "Mode"),
+           let isOnline = UserDefaults.standard.string(forKey: "Online"){
+            if mode == "SingleUpdate" || isOnline == "false" {
+                manager.stopUpdatingLocation()
+            }
+        }
         
         completion?(location)
 //        manager.stopUpdatingLocation()

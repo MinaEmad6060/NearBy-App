@@ -9,13 +9,21 @@ import Foundation
 
 
 class HomeViewModel: HomeViewModelProtocol{
-    var bindResultToViewController: (() -> ())?
+    var bindPlacesToViewController: (() -> ())?
+    var bindNetworkStatusToViewController: (() -> ())?
     
-   
     var fetchDataFromAPI: FetchDataFromAPI?
-        var nearLocations : NearLocations?{
+    var networkConnection: NetworkConnection?
+    
+    var isOnline: Bool?{
         didSet{
-            (bindResultToViewController ?? {})()
+            (bindNetworkStatusToViewController ?? {})()
+        }
+    }
+    
+    var nearLocations : NearLocations?{
+        didSet{
+            (bindPlacesToViewController ?? {})()
         }
     }
     
@@ -27,7 +35,22 @@ class HomeViewModel: HomeViewModelProtocol{
             }
     }
     
-    
-    
+    func checkNetworkConnection(){
+        networkConnection = NetworkConnection()
+        if networkConnection!.isNetworkReachable() {
+            print("Network is reachable")
+            UserDefaults.standard.set("true", forKey: "Online")
+        } else {
+            print("No network connection")
+            UserDefaults.standard.set("false", forKey: "Online")
+            if isOnline ?? true {
+                print("true")
+                isOnline = false
+            }else{
+                print("false")
+                isOnline = true
+            }
+        }
+    }
     
 }

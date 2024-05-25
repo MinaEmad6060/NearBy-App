@@ -9,8 +9,13 @@ import Foundation
 
 
 protocol HomeViewModelProtocol{
-    var bindResultToViewController: (() -> ())? { get set }
-    var nearLocations: NearLocations? { get set }
+    
     @available(iOS 13.0.0, *)
     func getNearLocationsFromApi()
+    func checkNetworkConnection()
+    
+    var bindPlacesToViewController: (() -> ())? { get set }
+    var bindNetworkStatusToViewController: (() -> ())? { get set }
+    var nearLocations: NearLocations? { get set }
+    
 }

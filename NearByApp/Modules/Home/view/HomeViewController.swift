@@ -10,24 +10,51 @@ import SDWebImage
 import CoreLocation
 
 
+
+struct PlaceDetails{
+    var placeName: String?
+    var placeImagePrefix: String?
+    var placeImageSuffix: String?
+    var categoryOfPlace: CategoryOfLacation?
+    var countryOfPlace: String?
+    var regionOfPlace: String?
+}
+
+
 @available(iOS 13.0.0, *)
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
-    @IBOutlet weak var nearLocationsTableView: UITableView!
-    
-    var homeViewModel: HomeViewModelProtocol?
     var numberOfPlaces = 0
-    var networkConnection: NetworkConnection?
+    var homeViewModel: HomeViewModelProtocol?
     var placeDetails: [PlaceDetails] = [PlaceDetails]()
         
+
+    @IBAction func btnMode(_ sender: Any) {
+        if btnModeText.title == "Realtime"{
+            btnModeText.title = "SingleUpdate"
+            UserDefaults.standard.set(btnModeText.title, forKey: "Mode")
+        }else{
+            getUpdatedLocation()
+            btnModeText.title = "Realtime"
+            UserDefaults.standard.set(btnModeText.title, forKey: "Mode")
+        }
+    }
+    
+    @IBOutlet weak var btnModeText: UIBarButtonItem!
+    @IBOutlet weak var nearLocationsTableView: UITableView!
+   
     override func viewDidLoad() {
         super.viewDidLoad()
-        networkConnection = NetworkConnection()
+        
+        if let mode = UserDefaults.standard.string(forKey: "Mode") {
+            btnModeText.title = mode
+        }
+        
         homeViewModel = HomeViewModel()
         
         getUpdatedLocation()
-        checkNetworkConnection()
+        checkNetworkReachability()
         updateTableView()
         
         
@@ -61,7 +88,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             cell.placeAddress.text = (placeDetails[indexPath.row].countryOfPlace ?? "")+", "+(placeDetails[indexPath.row].regionOfPlace ?? "")
         }
         
-
         return cell
         
     }
@@ -73,20 +99,21 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         homeViewModel?.getNearLocationsFromApi()
         
-        homeViewModel?.bindResultToViewController = {
+        homeViewModel?.bindPlacesToViewController = {
             self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
-            print("numberOfPlaces : \(self.numberOfPlaces)")
             var placeDetails = PlaceDetails()
             for i in 0..<self.numberOfPlaces {
-                placeDetails.placeName = self.homeViewModel?.nearLocations?.results[i].name ?? ""
-                placeDetails.placeImagePrefix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.prefix ?? ""
-                placeDetails.placeImageSuffix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.suffix ?? ""
-                
-                placeDetails.categoryOfPlace = self.homeViewModel?.nearLocations?.results[i].categories[0]
-                placeDetails.countryOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.country
-                placeDetails.regionOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.region
-                
-                self.placeDetails.append(placeDetails)
+                if self.homeViewModel?.nearLocations?.results[i].categories.count ?? 0 > 0 {
+                    placeDetails.placeName = self.homeViewModel?.nearLocations?.results[i].name ?? ""
+                    placeDetails.placeImagePrefix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.prefix ?? ""
+                    placeDetails.placeImageSuffix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.suffix ?? ""
+                    
+                    placeDetails.categoryOfPlace = self.homeViewModel?.nearLocations?.results[i].categories[0]
+                    placeDetails.countryOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.country
+                    placeDetails.regionOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.region
+                    
+                    self.placeDetails.append(placeDetails)
+                }
             }
             
             
@@ -99,12 +126,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func getUpdatedLocation(){
         LocationManager.shared.getUserLocation{ location in
-            
-            if LocationManager.distance >= 200 {
-                print("if distance")
                 self.homeViewModel?.getNearLocationsFromApi()
-                
-                self.homeViewModel?.bindResultToViewController = {
+                if LocationManager.distance >= 200 {
+                    self.homeViewModel?.bindPlacesToViewController = {
                     self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
                     print("numberOfPlaces : \(self.numberOfPlaces)")
                     var placeDetails = PlaceDetails()
@@ -123,9 +147,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                         }
                        
                     }
-                    
-                    
-                    
                     DispatchQueue.main.async {
                         self.nearLocationsTableView.reloadData()
                     }
@@ -145,10 +166,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         return coordinate1.distance(from: coordinate2)
     }
     
-    func checkNetworkConnection(){
-        if networkConnection!.isNetworkReachable() {
-            print("Network is reachable")
-        } else {
+    func checkNetworkReachability(){
+        homeViewModel?.bindNetworkStatusToViewController = {
+            print("homeViewModel No network connection")
             let alertController = UIAlertController(title: "Alert Title", message: "Alert Message", preferredStyle: .alert)
 
             let okAction = UIAlertAction(title: "OK", style: .default) { _ in
@@ -158,21 +178,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
 
             // Present the alert
             DispatchQueue.main.async {
+                print("DispatchQueue No network connection")
                 self.present(alertController, animated: true, completion: nil)
             }
-            print("No network connection")
         }
+        homeViewModel?.checkNetworkConnection()
     }
     
-
 }
 
-
-struct PlaceDetails{
-    var placeName: String?
-    var placeImagePrefix: String?
-    var placeImageSuffix: String?
-    var categoryOfPlace: CategoryOfLacation?
-    var countryOfPlace: String?
-    var regionOfPlace: String?
-}

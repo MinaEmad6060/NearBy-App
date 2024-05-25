@@ -32,9 +32,11 @@ class FetchDataFromAPI{
             
             do{
                 let decoder = JSONDecoder()
-                let json = try decoder.decode(NearLocations.self, from: data!)
-                let nearLocations = json
-                handler(nearLocations)
+                if let data = data {
+                    let json = try decoder.decode(NearLocations.self, from: data)
+                    let nearLocations = json
+                    handler(nearLocations)
+                }
             }catch{
                 print("Error while fetching data")
             }
