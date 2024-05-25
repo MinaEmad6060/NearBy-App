@@ -43,13 +43,18 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     @IBOutlet weak var btnModeText: UIBarButtonItem!
     @IBOutlet weak var nearLocationsTableView: UITableView!
-   
+    
+    
+    @IBOutlet weak var statusImage: UIImageView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if let mode = UserDefaults.standard.string(forKey: "Mode") {
             btnModeText.title = mode
         }
+        
+        
         
         homeViewModel = HomeViewModel()
         
@@ -127,6 +132,25 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func getUpdatedLocation(){
         LocationManager.shared.getUserLocation{ location in
                 self.homeViewModel?.getNearLocationsFromApi()
+            print("LocationManager : \(UserDefaults.standard.string(forKey: "Online") ?? "nothing")")
+            
+            if (LocationManager.currentLocation?.coordinate.latitude == -1 || self.numberOfPlaces == 0) && (UserDefaults.standard.string(forKey: "Online") == "success") {
+                self.nearLocationsTableView.isHidden = true
+                self.statusImage.isHidden = false
+                self.statusImage.image = UIImage(named: "joker")
+                self.view.setNeedsLayout()
+                self.view.layoutIfNeeded()
+                self.view.setNeedsDisplay()
+            }else if (UserDefaults.standard.string(forKey: "Online") == "error") || (UserDefaults.standard.string(forKey: "Online") == "false") {
+                self.statusImage.isHidden = false
+                self.statusImage.image = UIImage(named: "man")
+            }else {
+                self.nearLocationsTableView.isHidden = false
+                self.statusImage.isHidden = true
+                self.view.setNeedsLayout()
+                self.view.layoutIfNeeded()
+                self.view.setNeedsDisplay()
+            }
                 if LocationManager.distance >= 200 {
                     self.homeViewModel?.bindPlacesToViewController = {
                     self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
