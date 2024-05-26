@@ -45,7 +45,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         self.statusText.text = ""
  
         loadingIndicator()
-        getUpdatedLocation()
+        getUpdatedPlaces()
         checkNetworkReachability()
         updateTableView()
         
@@ -126,7 +126,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             btnModeText.title = "SingleUpdate"
             UserDefaults.standard.set(btnModeText.title, forKey: "Mode")
         }else{
-            getUpdatedLocation()
+            getUpdatedPlaces()
             btnModeText.title = "Realtime"
             UserDefaults.standard.set(btnModeText.title, forKey: "Mode")
         }
@@ -154,18 +154,18 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
-    func updateBackgroundSubviews(isTableViewHidden: Bool, isStatusImageIsHidden: Bool, imageName: String, statusText: String){
+    func updateBackgroundSubviews(isTableViewHidden: Bool, isStatusImageHidden: Bool, imageName: String, statusText: String){
         self.indicator?.stopAnimating()
         self.nearLocationsTableView.isHidden = isTableViewHidden
-        self.statusImage.isHidden = isStatusImageIsHidden
+        self.statusImage.isHidden = isStatusImageHidden
         self.statusImage.image = UIImage(named: imageName)
         self.statusText.text = statusText
     }
     
     
-    func getUpdatedLocation(){
+    func getUpdatedPlaces(){
         LocationManager.shared.getUserLocation{ location in
-                self.homeViewModel?.getNearLocationsFromApi()
+            self.homeViewModel?.getNearLocationsFromApi()
             self.checkApplicationMode()
             if LocationManager.distance >= 200 {
                 self.homeViewModel?.bindPlacesToViewController = {
@@ -182,25 +182,19 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     
-    func updateBackgroundSubViews(isTableViewHidden: Bool, isStatusImageHidden: Bool, imageName: String, statusText: String){
-        self.indicator?.stopAnimating()
-        self.nearLocationsTableView.isHidden = isTableViewHidden
-        self.statusImage.isHidden = isStatusImageHidden
-        self.statusImage.image = UIImage(named: imageName)
-        self.statusText.text = statusText
-    }
-    
     func checkApplicationMode(){
-        if (LocationManager.currentLocation?.coordinate.latitude == -1 || self.numberOfPlaces == 0) && (UserDefaults.standard.string(forKey: "Online") == "success") {
-            self.updateBackgroundSubViews(isTableViewHidden: true, isStatusImageHidden: false, imageName: "NoData", statusText: "No data found !!")
+        if (LocationManager.currentLocation?.coordinate.latitude == -1 || self.numberOfPlaces == 0) && (UserDefaults.standard.string(forKey: "Online") == "true") {
+            self.updateBackgroundSubviews(isTableViewHidden: true, isStatusImageHidden: false, imageName: "NoData", statusText: "No data found !!")
             self.view.setNeedsLayout()
         }else if (UserDefaults.standard.string(forKey: "Online") == "error") || (UserDefaults.standard.string(forKey: "Online") == "false") {
-            self.updateBackgroundSubViews(isTableViewHidden: true, isStatusImageHidden: false, imageName: "wrong", statusText: "Somthing went wrong !!")
+            self.updateBackgroundSubviews(isTableViewHidden: true, isStatusImageHidden: false, imageName: "wrong", statusText: "Somthing went wrong !!")
         }else {
             self.nearLocationsTableView.isHidden = false
             self.statusImage.isHidden = true
             self.statusText.text = ""
-            self.view.setNeedsLayout()
+            if LocationManager.distance >= 200 {
+                self.view.setNeedsLayout()
+            }
         }
     }
     
