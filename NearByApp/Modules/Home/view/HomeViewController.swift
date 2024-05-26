@@ -183,10 +183,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     func checkApplicationMode(){
-        if (LocationManager.currentLocation?.coordinate.latitude == -1 || self.numberOfPlaces == 0) && (UserDefaults.standard.string(forKey: "Online") == "true") {
+        if (LocationManager.currentLocation?.coordinate.latitude ?? 0 < 0 ) && (self.numberOfPlaces == 0) && (UserDefaults.standard.string(forKey: "GetData") == "success") {
             self.updateBackgroundSubviews(isTableViewHidden: true, isStatusImageHidden: false, imageName: "NoData", statusText: "No data found !!")
             self.view.setNeedsLayout()
-        }else if (UserDefaults.standard.string(forKey: "Online") == "error") || (UserDefaults.standard.string(forKey: "Online") == "false") {
+        }else if (UserDefaults.standard.string(forKey: "GetData") == "error") || (UserDefaults.standard.string(forKey: "Online") == "false") {
             self.updateBackgroundSubviews(isTableViewHidden: true, isStatusImageHidden: false, imageName: "wrong", statusText: "Somthing went wrong !!")
         }else {
             self.nearLocationsTableView.isHidden = false
@@ -214,6 +214,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.placeDetails.append(placeDetails)
             }
         }
+        UserDefaults.standard.set("success", forKey: "GetData")
     }
     
 }

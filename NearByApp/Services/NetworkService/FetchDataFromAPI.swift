@@ -45,11 +45,11 @@ class FetchDataFromAPI{
             if let data = data {
                 let json = try decoder.decode(NearLocations.self, from: data)
                 let nearLocations = json
-                UserDefaults.standard.set("success", forKey: "Online")
+//                UserDefaults.standard.set("success", forKey: "GetData")
                 handler(nearLocations)
             }
         }catch{
-            UserDefaults.standard.set("error", forKey: "Online")
+            UserDefaults.standard.set("error", forKey: "GetData")
             print("Error fetching data: \(error.localizedDescription)")
         }
     }

@@ -30,7 +30,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate{
             return
         }
         
-        if LocationManager.currentLocation == nil {
+        if LocationManager.currentLocation == nil || UserDefaults.standard.string(forKey: "Mode") == "SingleUpdate"{
             LocationManager.currentLocation=locations.first
         }
    
