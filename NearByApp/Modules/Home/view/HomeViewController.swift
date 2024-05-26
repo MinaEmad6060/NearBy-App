@@ -28,7 +28,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     var numberOfPlaces = 0
     var homeViewModel: HomeViewModelProtocol?
     var placeDetails: [PlaceDetails] = [PlaceDetails]()
-        
+    var indicator : UIActivityIndicatorView?
+   
+    
 
     @IBAction func btnMode(_ sender: Any) {
         if btnModeText.title == "Realtime"{
@@ -47,23 +49,22 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     @IBOutlet weak var statusImage: UIImageView!
     
+    
+    @IBOutlet weak var statusText: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        
+        loadingIndicator()
+        self.statusImage.isHidden = true
+        self.statusText.text = ""
         if let mode = UserDefaults.standard.string(forKey: "Mode") {
             btnModeText.title = mode
         }
-        
-        
-        
+ 
         homeViewModel = HomeViewModel()
-        
         getUpdatedLocation()
         checkNetworkReachability()
         updateTableView()
-        
         
         nearLocationsTableView.delegate = self
         nearLocationsTableView.dataSource = self
@@ -93,7 +94,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         if placeDetails.count > 0{
             let imageUrl = URL(string: (placeDetails[indexPath.row].placeImagePrefix ?? "")+"bg_120"+(placeDetails[indexPath.row].placeImageSuffix ?? ""))
             
-            cell.locationIcon.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "man"))
+            cell.locationIcon.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "wrong"))
             
             cell.placeName.text = placeDetails[indexPath.row].placeName
             cell.placeCategory.text = placeDetails[indexPath.row].categoryOfPlace?.plural_name
@@ -140,49 +141,53 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         LocationManager.shared.getUserLocation{ location in
                 self.homeViewModel?.getNearLocationsFromApi()
 //            print("LocationManager : \(UserDefaults.standard.string(forKey: "Online") ?? "nothing")")
-            
+            self.indicator?.stopAnimating()
+
             if (LocationManager.currentLocation?.coordinate.latitude == -1 || self.numberOfPlaces == 0) && (UserDefaults.standard.string(forKey: "Online") == "success") {
                 self.nearLocationsTableView.isHidden = true
                 self.statusImage.isHidden = false
-                self.statusImage.image = UIImage(named: "joker")
+                self.statusImage.image = UIImage(named: "NoData")
+                self.statusText.text = "No data found !!"
                 self.view.setNeedsLayout()
                 self.view.layoutIfNeeded()
                 self.view.setNeedsDisplay()
             }else if (UserDefaults.standard.string(forKey: "Online") == "error") || (UserDefaults.standard.string(forKey: "Online") == "false") {
+                self.nearLocationsTableView.isHidden = true
                 self.statusImage.isHidden = false
-                self.statusImage.image = UIImage(named: "man")
+                self.statusImage.image = UIImage(named: "wrong")
+                self.statusText.text = "Somthing went wrong !!"
             }else {
                 self.nearLocationsTableView.isHidden = false
                 self.statusImage.isHidden = true
                 self.view.setNeedsLayout()
-                self.view.layoutIfNeeded()
-                self.view.setNeedsDisplay()
+                self.statusText.text = ""
+
             }
-                if LocationManager.distance >= 200 {
-                    self.homeViewModel?.bindPlacesToViewController = {
-                    self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
-//                    print("numberOfPlaces : \(self.numberOfPlaces)")
-                    var placeDetails = PlaceDetails()
-                    for i in 0..<self.numberOfPlaces {
-                        if self.homeViewModel?.nearLocations?.results[i].categories.count ?? 0 > 0 {
+            
+            if LocationManager.distance >= 200 {
+                self.homeViewModel?.bindPlacesToViewController = {
+                self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
+                var placeDetails = PlaceDetails()
+                for i in 0..<self.numberOfPlaces {
+                    if self.homeViewModel?.nearLocations?.results[i].categories.count ?? 0 > 0 {
+                    
+                        placeDetails.placeName = self.homeViewModel?.nearLocations?.results[i].name ?? ""
+                        placeDetails.placeImagePrefix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.prefix ?? ""
+                        placeDetails.placeImageSuffix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.suffix ?? ""
                         
-                            placeDetails.placeName = self.homeViewModel?.nearLocations?.results[i].name ?? ""
-                            placeDetails.placeImagePrefix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.prefix ?? ""
-                            placeDetails.placeImageSuffix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.suffix ?? ""
-                            
-                            placeDetails.categoryOfPlace = self.homeViewModel?.nearLocations?.results[i].categories[0]
-                            placeDetails.countryOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.country
-                            placeDetails.regionOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.region
-                            
-                            self.placeDetails.append(placeDetails)
-                        }
-                       
+                        placeDetails.categoryOfPlace = self.homeViewModel?.nearLocations?.results[i].categories[0]
+                        placeDetails.countryOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.country
+                        placeDetails.regionOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.region
+                        
+                        self.placeDetails.append(placeDetails)
                     }
-                    DispatchQueue.main.async {
-                        self.nearLocationsTableView.reloadData()
-                    }
+                   
+                }
+                DispatchQueue.main.async {
+                    self.nearLocationsTableView.reloadData()
                 }
             }
+        }
             
 //            print("Distance: \(LocationManager.distance) meters")
         }
@@ -214,6 +219,17 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
         homeViewModel?.checkNetworkConnection()
+    }
+    
+    @available(iOS 13.0, *)
+    func loadingIndicator(){
+        indicator=UIActivityIndicatorView(style: .large)
+        guard let indicator = indicator else{
+            return
+        }
+        indicator.center = view.center
+        indicator.startAnimating()
+        view.addSubview(indicator)
     }
     
 }
