@@ -38,7 +38,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate{
         
         print("Distance = \(LocationManager.distance)")
         
-        if LocationManager.distance >= 200 {
+        if LocationManager.distance >= 500 {
             LocationManager.currentLocation=locations.first
         }
         
@@ -67,7 +67,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate{
     func checkApplicationMode(){
         if let mode = UserDefaults.standard.string(forKey: "Mode"),
            let isOnline = UserDefaults.standard.string(forKey: "Online"){
-            if mode == "SingleUpdate" || isOnline == "false" {
+            if mode == "Single" || isOnline == "false" {
                 manager.stopUpdatingLocation()
             }
         }

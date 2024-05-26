@@ -15,7 +15,7 @@ struct PlaceDetails{
     var placeName: String?
     var placeImagePrefix: String?
     var placeImageSuffix: String?
-    var categoryOfPlace: CategoryOfLacation?
+    var placeCategory: String?
     var countryOfPlace: String?
     var regionOfPlace: String?
 }
@@ -86,7 +86,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             cell.locationIcon.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "wrong"))
             
             cell.placeName.text = placeDetails[indexPath.row].placeName
-            cell.placeCategory.text = placeDetails[indexPath.row].categoryOfPlace?.plural_name
+            cell.placeCategory.text = placeDetails[indexPath.row].placeCategory
             cell.placeAddress.text = (placeDetails[indexPath.row].countryOfPlace ?? "")+", "+(placeDetails[indexPath.row].regionOfPlace ?? "")
         }
         
@@ -123,7 +123,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     @IBAction func btnMode(_ sender: Any) {
         if btnModeText.title == "Realtime"{
-            btnModeText.title = "SingleUpdate"
+            btnModeText.title = "Single"
             UserDefaults.standard.set(btnModeText.title, forKey: "Mode")
         }else{
             getUpdatedPlaces()
@@ -167,7 +167,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         LocationManager.shared.getUserLocation{ location in
             self.homeViewModel?.getNearLocationsFromApi()
             self.checkApplicationMode()
-            if LocationManager.distance >= 200 {
+            if LocationManager.distance >= 100 {
                 self.homeViewModel?.bindPlacesToViewController = {
                     self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
                     self.collectPlacesFromViewModel()
@@ -177,7 +177,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                     
                 }
             }
-            
         }
     }
     
@@ -192,7 +191,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             self.nearLocationsTableView.isHidden = false
             self.statusImage.isHidden = true
             self.statusText.text = ""
-            if LocationManager.distance >= 200 {
+            if LocationManager.distance >= 500 {
                 self.view.setNeedsLayout()
             }
         }
@@ -207,7 +206,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 placeDetails.placeImagePrefix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.prefix ?? ""
                 placeDetails.placeImageSuffix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.suffix ?? ""
                 
-                placeDetails.categoryOfPlace = self.homeViewModel?.nearLocations?.results[i].categories[0]
+                placeDetails.placeCategory = self.homeViewModel?.nearLocations?.results[i].categories[0].plural_name
                 placeDetails.countryOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.country
                 placeDetails.regionOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.region
                 

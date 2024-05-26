@@ -35,7 +35,7 @@ class FetchDataFromAPI{
     func setupURL() -> URL{
         let currentLat = LocationManager.currentLocation?.coordinate.latitude
         let currentLon = LocationManager.currentLocation?.coordinate.longitude
-        let url = URL(string: "https://api.foursquare.com/v3/places/nearby?ll=\(currentLat ?? -1),\(currentLon ?? -1)")!
+        let url = URL(string: "https://api.foursquare.com/v3/places/nearby?ll=\(currentLat ?? -1),\(currentLon ?? -1)&radius=1000")!
         return url
     }
     

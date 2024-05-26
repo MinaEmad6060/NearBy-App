@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct NearLocations: Codable{
     var results: [Result] = [Result]()
 }

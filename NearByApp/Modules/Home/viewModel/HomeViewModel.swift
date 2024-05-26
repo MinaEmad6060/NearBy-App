@@ -15,12 +15,6 @@ class HomeViewModel: HomeViewModelProtocol{
     var fetchDataFromAPI: FetchDataFromAPI?
     var networkConnection: NetworkConnection?
     
-    var isOnline: Bool?{
-        didSet{
-            (bindNetworkStatusToViewController ?? {})()
-        }
-    }
-    
     var nearLocations : NearLocations?{
         didSet{
             (bindPlacesToViewController ?? {})()
@@ -41,11 +35,7 @@ class HomeViewModel: HomeViewModelProtocol{
             UserDefaults.standard.set("true", forKey: "Online")
         } else {
             UserDefaults.standard.set("false", forKey: "Online")
-            if isOnline ?? true {
-                isOnline = false
-            }else{
-                isOnline = true
-            }
+            (self.bindNetworkStatusToViewController ?? {})()
         }
     }
     
