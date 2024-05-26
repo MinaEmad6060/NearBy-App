@@ -80,7 +80,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return numberOfPlaces
+        if numberOfPlaces > 0{
+            self.indicator?.stopAnimating()
+            return numberOfPlaces
+        }
+        return 0
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -91,7 +96,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "locationCell", for: indexPath) as! LocationTableViewCell
 
-        if placeDetails.count > 0{
+        if (placeDetails.count > indexPath.row){
             let imageUrl = URL(string: (placeDetails[indexPath.row].placeImagePrefix ?? "")+"bg_120"+(placeDetails[indexPath.row].placeImageSuffix ?? ""))
             
             cell.locationIcon.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "wrong"))
@@ -141,9 +146,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         LocationManager.shared.getUserLocation{ location in
                 self.homeViewModel?.getNearLocationsFromApi()
 //            print("LocationManager : \(UserDefaults.standard.string(forKey: "Online") ?? "nothing")")
-            self.indicator?.stopAnimating()
-
             if (LocationManager.currentLocation?.coordinate.latitude == -1 || self.numberOfPlaces == 0) && (UserDefaults.standard.string(forKey: "Online") == "success") {
+                self.indicator?.stopAnimating()
                 self.nearLocationsTableView.isHidden = true
                 self.statusImage.isHidden = false
                 self.statusImage.image = UIImage(named: "NoData")
@@ -152,6 +156,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.view.layoutIfNeeded()
                 self.view.setNeedsDisplay()
             }else if (UserDefaults.standard.string(forKey: "Online") == "error") || (UserDefaults.standard.string(forKey: "Online") == "false") {
+                self.indicator?.stopAnimating()
                 self.nearLocationsTableView.isHidden = true
                 self.statusImage.isHidden = false
                 self.statusImage.image = UIImage(named: "wrong")
