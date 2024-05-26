@@ -143,26 +143,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     @available(iOS 13.0.0, *)
     func updateTableView(){
-
         homeViewModel?.getNearLocationsFromApi()
-        
         homeViewModel?.bindPlacesToViewController = {
             self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
-            var placeDetails = PlaceDetails()
-            for i in 0..<self.numberOfPlaces {
-                if self.homeViewModel?.nearLocations?.results[i].categories.count ?? 0 > 0 {
-                    placeDetails.placeName = self.homeViewModel?.nearLocations?.results[i].name ?? ""
-                    placeDetails.placeImagePrefix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.prefix ?? ""
-                    placeDetails.placeImageSuffix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.suffix ?? ""
-                    
-                    placeDetails.categoryOfPlace = self.homeViewModel?.nearLocations?.results[i].categories[0]
-                    placeDetails.countryOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.country
-                    placeDetails.regionOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.region
-                    
-                    self.placeDetails.append(placeDetails)
-                }
-            }
-            
+            self.collectPlacesFromViewModel()
             DispatchQueue.main.async {
                 self.nearLocationsTableView.reloadData()
             }
@@ -170,61 +154,72 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
+    func updateBackgroundSubviews(isTableViewHidden: Bool, isStatusImageIsHidden: Bool, imageName: String, statusText: String){
+        self.indicator?.stopAnimating()
+        self.nearLocationsTableView.isHidden = isTableViewHidden
+        self.statusImage.isHidden = isStatusImageIsHidden
+        self.statusImage.image = UIImage(named: imageName)
+        self.statusText.text = statusText
+    }
+    
+    
     func getUpdatedLocation(){
-        
         LocationManager.shared.getUserLocation{ location in
                 self.homeViewModel?.getNearLocationsFromApi()
-            
-            if (LocationManager.currentLocation?.coordinate.latitude == -1 || self.numberOfPlaces == 0) && (UserDefaults.standard.string(forKey: "Online") == "success") {
-                self.indicator?.stopAnimating()
-                self.nearLocationsTableView.isHidden = true
-                self.statusImage.isHidden = false
-                self.statusImage.image = UIImage(named: "NoData")
-                self.statusText.text = "No data found !!"
-                self.view.setNeedsLayout()
-                self.view.layoutIfNeeded()
-                self.view.setNeedsDisplay()
-            }else if (UserDefaults.standard.string(forKey: "Online") == "error") || (UserDefaults.standard.string(forKey: "Online") == "false") {
-                self.indicator?.stopAnimating()
-                self.nearLocationsTableView.isHidden = true
-                self.statusImage.isHidden = false
-                self.statusImage.image = UIImage(named: "wrong")
-                self.statusText.text = "Somthing went wrong !!"
-            }else {
-                self.nearLocationsTableView.isHidden = false
-                self.statusImage.isHidden = true
-                self.view.setNeedsLayout()
-                self.statusText.text = ""
-
-            }
-            
+            self.checkApplicationMode()
             if LocationManager.distance >= 200 {
                 self.homeViewModel?.bindPlacesToViewController = {
-                self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
-                var placeDetails = PlaceDetails()
-                for i in 0..<self.numberOfPlaces {
-                    if self.homeViewModel?.nearLocations?.results[i].categories.count ?? 0 > 0 {
-                    
-                        placeDetails.placeName = self.homeViewModel?.nearLocations?.results[i].name ?? ""
-                        placeDetails.placeImagePrefix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.prefix ?? ""
-                        placeDetails.placeImageSuffix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.suffix ?? ""
-                        
-                        placeDetails.categoryOfPlace = self.homeViewModel?.nearLocations?.results[i].categories[0]
-                        placeDetails.countryOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.country
-                        placeDetails.regionOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.region
-                        
-                        self.placeDetails.append(placeDetails)
+                    self.numberOfPlaces = self.homeViewModel?.nearLocations?.results.count ?? 10
+                    self.collectPlacesFromViewModel()
+                    DispatchQueue.main.async {
+                        self.nearLocationsTableView.reloadData()
                     }
-                   
-                }
-                DispatchQueue.main.async {
-                    self.nearLocationsTableView.reloadData()
+                    
                 }
             }
-        }
             
         }
-        
+    }
+    
+    
+    func updateBackgroundSubViews(isTableViewHidden: Bool, isStatusImageHidden: Bool, imageName: String, statusText: String){
+        self.indicator?.stopAnimating()
+        self.nearLocationsTableView.isHidden = isTableViewHidden
+        self.statusImage.isHidden = isStatusImageHidden
+        self.statusImage.image = UIImage(named: imageName)
+        self.statusText.text = statusText
+    }
+    
+    func checkApplicationMode(){
+        if (LocationManager.currentLocation?.coordinate.latitude == -1 || self.numberOfPlaces == 0) && (UserDefaults.standard.string(forKey: "Online") == "success") {
+            self.updateBackgroundSubViews(isTableViewHidden: true, isStatusImageHidden: false, imageName: "NoData", statusText: "No data found !!")
+            self.view.setNeedsLayout()
+        }else if (UserDefaults.standard.string(forKey: "Online") == "error") || (UserDefaults.standard.string(forKey: "Online") == "false") {
+            self.updateBackgroundSubViews(isTableViewHidden: true, isStatusImageHidden: false, imageName: "wrong", statusText: "Somthing went wrong !!")
+        }else {
+            self.nearLocationsTableView.isHidden = false
+            self.statusImage.isHidden = true
+            self.statusText.text = ""
+            self.view.setNeedsLayout()
+        }
+    }
+    
+    
+    func collectPlacesFromViewModel(){
+        var placeDetails = PlaceDetails()
+        for i in 0..<self.numberOfPlaces {
+            if self.homeViewModel?.nearLocations?.results[i].categories.count ?? 0 > 0 {
+                placeDetails.placeName = self.homeViewModel?.nearLocations?.results[i].name ?? ""
+                placeDetails.placeImagePrefix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.prefix ?? ""
+                placeDetails.placeImageSuffix = self.homeViewModel?.nearLocations?.results[i].categories[0].icon?.suffix ?? ""
+                
+                placeDetails.categoryOfPlace = self.homeViewModel?.nearLocations?.results[i].categories[0]
+                placeDetails.countryOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.country
+                placeDetails.regionOfPlace = self.homeViewModel?.nearLocations?.results[i].location?.region
+                
+                self.placeDetails.append(placeDetails)
+            }
+        }
     }
     
 }

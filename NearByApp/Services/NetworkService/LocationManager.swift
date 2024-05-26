@@ -33,25 +33,16 @@ class LocationManager: NSObject, CLLocationManagerDelegate{
         if LocationManager.currentLocation == nil {
             LocationManager.currentLocation=locations.first
         }
-        
-//        let updatedLat = location.coordinate.latitude
-//        let updatedLon = location.coordinate.longitude
-//        let currentLat = LocationManager.currentLocation?.coordinate.latitude
-//        let currentLon = LocationManager.currentLocation?.coordinate.longitude
+   
         LocationManager.distance = calculateDistanceMeters(location: location)
-       
+        
+        print("Distance = \(LocationManager.distance)")
+        
         if LocationManager.distance >= 200 {
             LocationManager.currentLocation=locations.first
         }
         
         checkApplicationMode()
-        
-//        if let mode = UserDefaults.standard.string(forKey: "Mode"),
-//           let isOnline = UserDefaults.standard.string(forKey: "Online"){
-//            if mode == "SingleUpdate" || isOnline == "false" {
-//                manager.stopUpdatingLocation()
-//            }
-//        }
         
         completion?(location)
     }
