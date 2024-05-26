@@ -69,8 +69,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         nearLocationsTableView.delegate = self
         nearLocationsTableView.dataSource = self
         
-        let nibCustomCell = UINib(nibName: "LocationTableViewCell", bundle: nil)
-        nearLocationsTableView.register(nibCustomCell, forCellReuseIdentifier: "locationCell")
+        let nibCustomCell = UINib(nibName: "TableViewCell", bundle: nil)
+        nearLocationsTableView.register(nibCustomCell, forCellReuseIdentifier: "TableViewCell")
     }
     
     override func viewDidLayoutSubviews() {
@@ -89,12 +89,12 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-            return 200.0
+            return 130.0
         }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "locationCell", for: indexPath) as! LocationTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCell", for: indexPath) as! TableViewCell
 
         if (placeDetails.count > indexPath.row){
             let imageUrl = URL(string: (placeDetails[indexPath.row].placeImagePrefix ?? "")+"bg_120"+(placeDetails[indexPath.row].placeImageSuffix ?? ""))

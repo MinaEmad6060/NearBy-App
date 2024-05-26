@@ -45,12 +45,6 @@
                 </subviews>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
-            <connections>
-                <outlet property="locationIcon" destination="2XS-PD-dKh" id="VfS-i0-PUT"/>
-                <outlet property="placeAddress" destination="2z8-ig-OP8" id="VEm-Wp-kJc"/>
-                <outlet property="placeCategory" destination="tmL-zU-0yC" id="yKO-Jj-YYv"/>
-                <outlet property="placeName" destination="Pox-aO-ajS" id="XWJ-HY-egt"/>
-            </connections>
             <point key="canvasLocation" x="276.3358778625954" y="31.690140845070424"/>
         </tableViewCell>
     </objects>
