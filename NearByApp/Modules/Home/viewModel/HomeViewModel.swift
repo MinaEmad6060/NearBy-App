@@ -30,24 +30,20 @@ class HomeViewModel: HomeViewModelProtocol{
     @available(iOS 13.0.0, *)
     func getNearLocationsFromApi() {
         fetchDataFromAPI = FetchDataFromAPI()
-            fetchDataFromAPI?.getNearLocations{ nearLocations in
-                self.nearLocations = nearLocations
-            }
+        fetchDataFromAPI?.getNearLocations{ nearLocations in
+            self.nearLocations = nearLocations
+        }
     }
     
     func checkNetworkConnection(){
         networkConnection = NetworkConnection()
         if networkConnection!.isNetworkReachable() {
-            print("Network is reachable")
             UserDefaults.standard.set("true", forKey: "Online")
         } else {
-            print("No network connection")
             UserDefaults.standard.set("false", forKey: "Online")
             if isOnline ?? true {
-                print("true")
                 isOnline = false
             }else{
-                print("false")
                 isOnline = true
             }
         }

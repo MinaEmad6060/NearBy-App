@@ -20,48 +20,31 @@ struct PlaceDetails{
     var regionOfPlace: String?
 }
 
-
 @available(iOS 13.0.0, *)
 class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
     
     var numberOfPlaces = 0
     var homeViewModel: HomeViewModelProtocol?
     var placeDetails: [PlaceDetails] = [PlaceDetails]()
     var indicator : UIActivityIndicatorView?
    
-    
-
-    @IBAction func btnMode(_ sender: Any) {
-        if btnModeText.title == "Realtime"{
-            btnModeText.title = "SingleUpdate"
-            UserDefaults.standard.set(btnModeText.title, forKey: "Mode")
-        }else{
-            getUpdatedLocation()
-            btnModeText.title = "Realtime"
-            UserDefaults.standard.set(btnModeText.title, forKey: "Mode")
-        }
-    }
-    
     @IBOutlet weak var btnModeText: UIBarButtonItem!
     @IBOutlet weak var nearLocationsTableView: UITableView!
-    
-    
     @IBOutlet weak var statusImage: UIImageView!
-    
-    
     @IBOutlet weak var statusText: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadingIndicator()
-        self.statusImage.isHidden = true
-        self.statusText.text = ""
+        homeViewModel = HomeViewModel()
+        
         if let mode = UserDefaults.standard.string(forKey: "Mode") {
             btnModeText.title = mode
         }
+        
+        self.statusImage.isHidden = true
+        self.statusText.text = ""
  
-        homeViewModel = HomeViewModel()
+        loadingIndicator()
         getUpdatedLocation()
         checkNetworkReachability()
         updateTableView()
@@ -69,8 +52,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         nearLocationsTableView.delegate = self
         nearLocationsTableView.dataSource = self
         
-        let nibCustomCell = UINib(nibName: "TableViewCell", bundle: nil)
-        nearLocationsTableView.register(nibCustomCell, forCellReuseIdentifier: "TableViewCell")
+        let nibCustomCell = UINib(nibName: "LocationTableViewCell", bundle: nil)
+        nearLocationsTableView.register(nibCustomCell, forCellReuseIdentifier: "LocationTableViewCell")
     }
     
     override func viewDidLayoutSubviews() {
@@ -88,13 +71,14 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-            return 130.0
-        }
+        return 130.0
+    }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCell", for: indexPath) as! TableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "LocationTableViewCell", for: indexPath) as! LocationTableViewCell
 
         if (placeDetails.count > indexPath.row){
             let imageUrl = URL(string: (placeDetails[indexPath.row].placeImagePrefix ?? "")+"bg_120"+(placeDetails[indexPath.row].placeImageSuffix ?? ""))
@@ -110,6 +94,51 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
+    @available(iOS 13.0, *)
+    func loadingIndicator(){
+        indicator=UIActivityIndicatorView(style: .large)
+        guard let indicator = indicator else{
+            return
+        }
+        indicator.center = view.center
+        indicator.startAnimating()
+        view.addSubview(indicator)
+    }
+    
+    func checkNetworkReachability(){
+        homeViewModel?.bindNetworkStatusToViewController = {
+            print("homeViewModel No network connection")
+            let alertController = UIAlertController(title: "No Internet Connection", message: "Please check your connection and try again", preferredStyle: .alert)
+
+            let okAction = UIAlertAction(title: "OK", style: .default) { _ in }
+            alertController.addAction(okAction)
+
+            DispatchQueue.main.async {
+                print("DispatchQueue No network connection")
+                self.present(alertController, animated: true, completion: nil)
+            }
+        }
+        homeViewModel?.checkNetworkConnection()
+    }
+    
+    @IBAction func btnMode(_ sender: Any) {
+        if btnModeText.title == "Realtime"{
+            btnModeText.title = "SingleUpdate"
+            UserDefaults.standard.set(btnModeText.title, forKey: "Mode")
+        }else{
+            getUpdatedLocation()
+            btnModeText.title = "Realtime"
+            UserDefaults.standard.set(btnModeText.title, forKey: "Mode")
+        }
+    }
+    
+    
+    func calculateDistance(fromLatitude latitude1: Double, fromLongitude longitude1: Double, toLatitude latitude2: Double, toLongitude longitude2: Double) -> CLLocationDistance {
+        let coordinate1 = CLLocation(latitude: latitude1, longitude: longitude1)
+        let coordinate2 = CLLocation(latitude: latitude2, longitude: longitude2)
+        
+        return coordinate1.distance(from: coordinate2)
+    }
     
     
     @available(iOS 13.0.0, *)
@@ -134,7 +163,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
             }
             
-            
             DispatchQueue.main.async {
                 self.nearLocationsTableView.reloadData()
             }
@@ -143,9 +171,10 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func getUpdatedLocation(){
+        
         LocationManager.shared.getUserLocation{ location in
                 self.homeViewModel?.getNearLocationsFromApi()
-//            print("LocationManager : \(UserDefaults.standard.string(forKey: "Online") ?? "nothing")")
+            
             if (LocationManager.currentLocation?.coordinate.latitude == -1 || self.numberOfPlaces == 0) && (UserDefaults.standard.string(forKey: "Online") == "success") {
                 self.indicator?.stopAnimating()
                 self.nearLocationsTableView.isHidden = true
@@ -194,47 +223,8 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
             
-//            print("Distance: \(LocationManager.distance) meters")
         }
         
-    }
-    
-    
-    func calculateDistance(fromLatitude latitude1: Double, fromLongitude longitude1: Double, toLatitude latitude2: Double, toLongitude longitude2: Double) -> CLLocationDistance {
-        let coordinate1 = CLLocation(latitude: latitude1, longitude: longitude1)
-        let coordinate2 = CLLocation(latitude: latitude2, longitude: longitude2)
-        
-        return coordinate1.distance(from: coordinate2)
-    }
-    
-    func checkNetworkReachability(){
-        homeViewModel?.bindNetworkStatusToViewController = {
-            print("homeViewModel No network connection")
-            let alertController = UIAlertController(title: "Alert Title", message: "Alert Message", preferredStyle: .alert)
-
-            let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-                // Handle OK button action if needed
-            }
-            alertController.addAction(okAction)
-
-            // Present the alert
-            DispatchQueue.main.async {
-                print("DispatchQueue No network connection")
-                self.present(alertController, animated: true, completion: nil)
-            }
-        }
-        homeViewModel?.checkNetworkConnection()
-    }
-    
-    @available(iOS 13.0, *)
-    func loadingIndicator(){
-        indicator=UIActivityIndicatorView(style: .large)
-        guard let indicator = indicator else{
-            return
-        }
-        indicator.center = view.center
-        indicator.startAnimating()
-        view.addSubview(indicator)
     }
     
 }

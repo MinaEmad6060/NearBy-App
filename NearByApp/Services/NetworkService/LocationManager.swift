@@ -34,35 +34,52 @@ class LocationManager: NSObject, CLLocationManagerDelegate{
             LocationManager.currentLocation=locations.first
         }
         
+//        let updatedLat = location.coordinate.latitude
+//        let updatedLon = location.coordinate.longitude
+//        let currentLat = LocationManager.currentLocation?.coordinate.latitude
+//        let currentLon = LocationManager.currentLocation?.coordinate.longitude
+        LocationManager.distance = calculateDistanceMeters(location: location)
+       
+        if LocationManager.distance >= 200 {
+            LocationManager.currentLocation=locations.first
+        }
+        
+        checkApplicationMode()
+        
+//        if let mode = UserDefaults.standard.string(forKey: "Mode"),
+//           let isOnline = UserDefaults.standard.string(forKey: "Online"){
+//            if mode == "SingleUpdate" || isOnline == "false" {
+//                manager.stopUpdatingLocation()
+//            }
+//        }
+        
+        completion?(location)
+    }
+    
+    func calculateDistanceMeters(location: CLLocation) -> Double{
         let updatedLat = location.coordinate.latitude
         let updatedLon = location.coordinate.longitude
         let currentLat = LocationManager.currentLocation?.coordinate.latitude
         let currentLon = LocationManager.currentLocation?.coordinate.longitude
-        LocationManager.distance = self.calculateDistance(fromLatitude: updatedLat, fromLongitude: updatedLon, toLatitude: currentLat ?? 0.0, toLongitude: currentLon ?? 0.0)
-//        print("currentLat : \(currentLat ?? 0.0) ::: currentLon\(currentLon ?? 0.0)")
-       
-        if LocationManager.distance >= 200 {
-            LocationManager.currentLocation=locations.first
-            print("Reset")
-        }
+        return self.calculateDistanceCoordinates(fromLatitude: updatedLat, fromLongitude: updatedLon, toLatitude: currentLat ?? 0.0, toLongitude: currentLon ?? 0.0)
+    }
+    
+    
+    func calculateDistanceCoordinates(fromLatitude latitude1: Double, fromLongitude longitude1: Double, toLatitude latitude2: Double, toLongitude longitude2: Double) -> CLLocationDistance {
+        let coordinate1 = CLLocation(latitude: latitude1, longitude: longitude1)
+        let coordinate2 = CLLocation(latitude: latitude2, longitude: longitude2)
         
+        return coordinate1.distance(from: coordinate2)
+    }
+    
+    
+    func checkApplicationMode(){
         if let mode = UserDefaults.standard.string(forKey: "Mode"),
            let isOnline = UserDefaults.standard.string(forKey: "Online"){
             if mode == "SingleUpdate" || isOnline == "false" {
                 manager.stopUpdatingLocation()
             }
         }
-        
-        completion?(location)
-//        manager.stopUpdatingLocation()
-    }
-    
-    
-    func calculateDistance(fromLatitude latitude1: Double, fromLongitude longitude1: Double, toLatitude latitude2: Double, toLongitude longitude2: Double) -> CLLocationDistance {
-        let coordinate1 = CLLocation(latitude: latitude1, longitude: longitude1)
-        let coordinate2 = CLLocation(latitude: latitude2, longitude: longitude2)
-        
-        return coordinate1.distance(from: coordinate2)
     }
     
 }

@@ -9,10 +9,8 @@
 /* Begin PBXBuildFile section */
 		400E6BBB2C002C3300C3BCFE /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400E6BBA2C002C3300C3BCFE /* LocationManager.swift */; };
 		400E6BBD2C002E9A00C3BCFE /* NetworkConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400E6BBC2C002E9A00C3BCFE /* NetworkConnection.swift */; };
-		404B2F902BFE2CB1007B968D /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404B2F8E2BFE2CB1007B968D /* LocationTableViewCell.swift */; };
-		404B2F912BFE2CB1007B968D /* LocationTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 404B2F8F2BFE2CB1007B968D /* LocationTableViewCell.xib */; };
-		4088C5142C02E51300D99567 /* TableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4088C5132C02E51300D99567 /* TableViewCell.xib */; };
-		4088C5152C02E51300D99567 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4088C5122C02E51300D99567 /* TableViewCell.swift */; };
+		4088C5142C02E51300D99567 /* LocationTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4088C5132C02E51300D99567 /* LocationTableViewCell.xib */; };
+		4088C5152C02E51300D99567 /* LocationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4088C5122C02E51300D99567 /* LocationTableViewCell.swift */; };
 		40AFE3812BFEB31B00BB9464 /* FetchDataFromAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40AFE3802BFEB31B00BB9464 /* FetchDataFromAPI.swift */; };
 		40BB48E12BFE4C1600827DE9 /* NearLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BB48E02BFE4C1600827DE9 /* NearLocations.swift */; };
 		40BE7FA72BFD94BB00814FA0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BE7FA62BFD94BB00814FA0 /* AppDelegate.swift */; };
@@ -30,10 +28,8 @@
 /* Begin PBXFileReference section */
 		400E6BBA2C002C3300C3BCFE /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		400E6BBC2C002E9A00C3BCFE /* NetworkConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConnection.swift; sourceTree = "<group>"; };
-		404B2F8E2BFE2CB1007B968D /* LocationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTableViewCell.swift; sourceTree = "<group>"; };
-		404B2F8F2BFE2CB1007B968D /* LocationTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocationTableViewCell.xib; sourceTree = "<group>"; };
-		4088C5122C02E51300D99567 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
-		4088C5132C02E51300D99567 /* TableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCell.xib; sourceTree = "<group>"; };
+		4088C5122C02E51300D99567 /* LocationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTableViewCell.swift; sourceTree = "<group>"; };
+		4088C5132C02E51300D99567 /* LocationTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocationTableViewCell.xib; sourceTree = "<group>"; };
 		40AFE3802BFEB31B00BB9464 /* FetchDataFromAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchDataFromAPI.swift; sourceTree = "<group>"; };
 		40BB48E02BFE4C1600827DE9 /* NearLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearLocations.swift; sourceTree = "<group>"; };
 		40BE7FA32BFD94BB00814FA0 /* NearByApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NearByApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -77,7 +73,7 @@
 			children = (
 				40BE7FAC2BFD94BB00814FA0 /* Main.storyboard */,
 				40BE7FB42BFD94BD00814FA0 /* LaunchScreen.storyboard */,
-				404B2F8F2BFE2CB1007B968D /* LocationTableViewCell.xib */,
+				4088C5132C02E51300D99567 /* LocationTableViewCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -95,7 +91,7 @@
 			children = (
 				40BE7FA62BFD94BB00814FA0 /* AppDelegate.swift */,
 				40BE7FA82BFD94BB00814FA0 /* SceneDelegate.swift */,
-				404B2F8E2BFE2CB1007B968D /* LocationTableViewCell.swift */,
+				4088C5122C02E51300D99567 /* LocationTableViewCell.swift */,
 				40BE7FB22BFD94BD00814FA0 /* Assets.xcassets */,
 			);
 			path = Utils;
@@ -173,8 +169,6 @@
 				40AFE37E2BFEB2ED00BB9464 /* Services */,
 				40BE7FB72BFD94BD00814FA0 /* Info.plist */,
 				40BE7FAF2BFD94BB00814FA0 /* NearByApp.xcdatamodeld */,
-				4088C5122C02E51300D99567 /* TableViewCell.swift */,
-				4088C5132C02E51300D99567 /* TableViewCell.xib */,
 			);
 			path = NearByApp;
 			sourceTree = "<group>";
@@ -257,9 +251,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				40BE7FB32BFD94BD00814FA0 /* Assets.xcassets in Resources */,
-				4088C5142C02E51300D99567 /* TableViewCell.xib in Resources */,
+				4088C5142C02E51300D99567 /* LocationTableViewCell.xib in Resources */,
 				40BE7FB62BFD94BD00814FA0 /* Base in Resources */,
-				404B2F912BFE2CB1007B968D /* LocationTableViewCell.xib in Resources */,
 				40BE7FAE2BFD94BB00814FA0 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -315,14 +308,13 @@
 			files = (
 				40BE7FB12BFD94BB00814FA0 /* NearByApp.xcdatamodeld in Sources */,
 				40D6AF7F2C0153350037A884 /* HomeViewModel.swift in Sources */,
-				404B2F902BFE2CB1007B968D /* LocationTableViewCell.swift in Sources */,
 				40BE7FAB2BFD94BB00814FA0 /* HomeViewController.swift in Sources */,
 				40BB48E12BFE4C1600827DE9 /* NearLocations.swift in Sources */,
 				400E6BBB2C002C3300C3BCFE /* LocationManager.swift in Sources */,
 				40D6AF7D2C0153290037A884 /* HomeViewModelProtocol.swift in Sources */,
 				40AFE3812BFEB31B00BB9464 /* FetchDataFromAPI.swift in Sources */,
 				40BE7FA72BFD94BB00814FA0 /* AppDelegate.swift in Sources */,
-				4088C5152C02E51300D99567 /* TableViewCell.swift in Sources */,
+				4088C5152C02E51300D99567 /* LocationTableViewCell.swift in Sources */,
 				40BE7FA92BFD94BB00814FA0 /* SceneDelegate.swift in Sources */,
 				400E6BBD2C002E9A00C3BCFE /* NetworkConnection.swift in Sources */,
 			);
